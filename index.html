@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Мой заработок</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0e0f13;
+    --surface: #16181f;
+    --surface2: #1e2029;
+    --border: #2a2d38;
+    --accent: #7c6af7;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --text: #e8eaf0;
+    --text2: #8b8fa8;
+    --text3: #555870;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 0 0 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 24px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent2); }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    padding: 20px 20px 0;
+  }
+  .tab {
+    flex: 1;
+    padding: 11px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+  }
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 20px; }
+  .page.active { display: block; }
+
+  /* ── SECTION CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  input[type="time"], input[type="number"], input[type="date"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    padding: 13px 16px;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type="time"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+    border-color: var(--accent);
+  }
+  input[type="number"] { font-size: 16px; }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── BUTTON ── */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.2px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .btn-danger {
+    background: rgba(248,113,113,0.12);
+    color: var(--red);
+    border: 1px solid rgba(248,113,113,0.2);
+    margin-top: 8px;
+  }
+
+  /* ── RESULT BOX ── */
+  .result-box {
+    background: linear-gradient(135deg, rgba(124,106,247,0.15) 0%, rgba(167,139,250,0.08) 100%);
+    border: 1px solid rgba(124,106,247,0.35);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+  .result-total {
+    font-family: var(--mono);
+    font-size: 42px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .result-total span { font-size: 24px; color: var(--accent2); }
+  .result-breakdown {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .breakdown-row .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-right: 8px;
+  }
+  .tag-base { background: rgba(52,211,153,0.15); color: var(--green); }
+  .tag-plus20 { background: rgba(251,191,36,0.15); color: var(--amber); }
+  .tag-plus50 { background: rgba(248,113,113,0.15); color: var(--red); }
+  .tag-break { background: rgba(139,143,168,0.15); color: var(--text2); }
+  .breakdown-val {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── TARIFF INFO ── */
+  .tariff-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .tariff-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .tariff-row strong { color: var(--text); font-family: var(--mono); font-weight: 600; }
+
+  /* ── CALENDAR ── */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .month-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+    text-transform: capitalize;
+  }
+  .nav-btn {
+    width: 36px; height: 36px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text2);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .nav-btn:active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 16px;
+  }
+  .cal-dow {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    padding: 4px 0 8px;
+    letter-spacing: 0.5px;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    gap: 2px;
+  }
+  .cal-day:active { transform: scale(0.92); }
+  .cal-day.other-month { color: var(--text3); opacity: 0.5; }
+  .cal-day.today { border: 1px solid var(--accent); color: var(--accent2); }
+  .cal-day.has-entry {
+    background: rgba(124,106,247,0.18);
+    color: var(--text);
+  }
+  .cal-day.has-entry .day-earn {
+    font-family: var(--mono);
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--accent2);
+    line-height: 1;
+  }
+
+  /* ── MONTH SUMMARY ── */
+  .month-summary {
+    background: linear-gradient(135deg, rgba(52,211,153,0.1) 0%, rgba(52,211,153,0.04) 100%);
+    border: 1px solid rgba(52,211,153,0.25);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .summary-label { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .summary-amount {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--green);
+    letter-spacing: -0.5px;
+  }
+  .summary-days { font-size: 12px; color: var(--text2); text-align: right; }
+  .summary-days strong { display: block; font-size: 22px; color: var(--text); font-family: var(--mono); }
+
+  /* ── ENTRIES LIST ── */
+  .entry-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .entry-item:last-child { border-bottom: none; }
+  .entry-date { font-size: 13px; color: var(--text2); }
+  .entry-date strong { display: block; font-size: 15px; color: var(--text); font-weight: 600; margin-bottom: 1px; }
+  .entry-time { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+  .entry-right { text-align: right; display: flex; align-items: center; gap: 10px; }
+  .entry-amount {
+    font-family: var(--mono);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--green);
+  }
+  .del-btn {
+    width: 28px; height: 28px;
+    background: rgba(248,113,113,0.1);
+    border: none;
+    border-radius: 6px;
+    color: var(--red);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .del-btn:active { background: rgba(248,113,113,0.25); }
+
+  .empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text3);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: var(--text);
+  }
+  .modal-date-display {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent2);
+    margin-bottom: 18px;
+    background: rgba(124,106,247,0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Мой<span>Заработок</span></div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('calc')">Калькулятор</button>
+  <button class="tab" onclick="switchTab('cal')">Календарь</button>
+</div>
+
+<!-- ══════════════ CALCULATOR PAGE ══════════════ -->
+<div class="page active" id="page-calc">
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-title">Рабочее время</div>
+    <div class="row2">
+      <div class="field">
+        <label>Начало работы</label>
+        <input type="time" id="timeStart" value="09:00">
+      </div>
+      <div class="field">
+        <label>Конец работы</label>
+        <input type="time" id="timeEnd" value="17:00">
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>Перерыв (минут)</label>
+      <input type="number" id="breakMin" value="0" min="0" max="480" placeholder="0">
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="calculate()">Рассчитать →</button>
+
+  <div class="result-box" id="resultBox">
+    <div class="result-label">Заработок за смену</div>
+    <div class="result-total" id="resultTotal">0 <span>€</span></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+    <button class="btn btn-secondary" onclick="openSaveModal()" style="margin-top:18px">💾 Сохранить в календарь</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Твои ставки</div>
+    <div class="tariff-row">
+      <span>Базовая ставка (до 18:30)</span>
+      <strong>15.35 €/ч</strong>
+    </div>
+    <div class="tariff-row">
+      <span>18:30 – 20:00 <span style="color:var(--amber)">+20%</span></span>
+      <strong>18.42 €/ч</strong>
+    </div>
+    <div class="tariff-row">
+      <span>После 20:00 <span style="color:var(--red)">+50%</span></span>
+      <strong>23.03 €/ч</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CALENDAR PAGE ══════════════ -->
+<div class="page" id="page-cal">
+
+  <div class="month-summary" id="monthSummary" style="margin-top:20px">
+    <div>
+      <div class="summary-label">Итого за месяц</div>
+      <div class="summary-amount" id="monthTotal">0.00 €</div>
+    </div>
+    <div class="summary-days">
+      <strong id="monthDays">0</strong>
+      рабочих дней
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="month-nav">
+      <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="month-title" id="monthLabel"></div>
+      <button class="nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Записи за месяц</div>
+    <div id="entriesList"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════ MODAL: SAVE TO CALENDAR ══════════════ -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal">
+    <div class="modal-title">Сохранить смену</div>
+    <div class="modal-date-display" id="modalDateDisplay"></div>
+    <div class="field">
+      <label>Дата</label>
+      <input type="date" id="saveDate">
+    </div>
+    <button class="btn btn-primary" onclick="saveEntry()">Сохранить</button>
+    <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+  </div>
+</div>
+
+<script>
+// ── RATES ──
+const BASE = 15.35;
+const RATE_MID = BASE * 1.20;   // 18:30–20:00
+const RATE_LATE = BASE * 1.50;  // 20:00+
+const BREAK1 = { h: 18, m: 30 }; // 18:30
+const BREAK2 = { h: 20, m: 0  }; // 20:00
+
+// ── STORAGE ──
+function loadEntries() {
+  try { return JSON.parse(localStorage.getItem('wage_entries') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveEntries(data) {
+  localStorage.setItem('wage_entries', JSON.stringify(data));
+}
+
+// ── CALC STATE ──
+let lastResult = null;
+
+// ── TABS ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0)====(tab==='calc')));
+  document.getElementById('page-calc').classList.toggle('active', tab==='calc');
+  document.getElementById('page-cal').classList.toggle('active', tab==='cal');
+  if (tab==='cal') renderCalendar();
+}
+
+// ── CALCULATE ──
+function timeToMin(h, m) { return h * 60 + m; }
+
+function calcEarnings(startH, startM, endH, endM, breakMins) {
+  let s = timeToMin(startH, startM);
+  let e = timeToMin(endH, endM);
+  if (e <= s) e += 24 * 60; // ночная смена
+  e -= breakMins;
+  if (e <= s) return null;
+
+  const b1 = timeToMin(BREAK1.h, BREAK1.m);
+  const b2 = timeToMin(BREAK2.h, BREAK2.m);
+
+  let segments = [];
+
+  function addSeg(from, to, rate, label, tagClass) {
+    if (to <= from) return;
+    const hrs = (to - from) / 60;
+    const earn = hrs * rate;
+    segments.push({ from, to, hrs, earn, label, tagClass });
+  }
+
+  // base: s → min(e, b1)
+  addSeg(s, Math.min(e, b1), BASE, 'Базовая ставка', 'tag-base');
+  // mid: max(s,b1) → min(e, b2)
+  addSeg(Math.max(s, b1), Math.min(e, b2), RATE_MID, '+20% (18:30–20:00)', 'tag-plus20');
+  // late: max(s,b2) → e
+  addSeg(Math.max(s, b2), e, RATE_LATE, '+50% (после 20:00)', 'tag-plus50');
+
+  const total = segments.reduce((a, b) => a + b.earn, 0);
+  return { total, segments, breakMins };
+}
+
+function fmtTime(totalMin) {
+  let m = ((totalMin % 1440) + 1440) % 1440;
+  return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+}
+
+function calculate() {
+  const startVal = document.getElementById('timeStart').value;
+  const endVal   = document.getElementById('timeEnd').value;
+  const breakMin = parseInt(document.getElementById('breakMin').value) || 0;
+
+  if (!startVal || !endVal) { alert('Укажи время начала и конца работы'); return; }
+
+  const [sh, sm] = startVal.split(':').map(Number);
+  const [eh, em] = endVal.split(':').map(Number);
+
+  const res = calcEarnings(sh, sm, eh, em, breakMin);
+  if (!res) { alert('Конец работы должен быть позже начала'); return; }
+
+  lastResult = { ...res, startVal, endVal, breakMin };
+
+  document.getElementById('resultTotal').innerHTML = res.total.toFixed(2) + ' <span>€</span>';
+
+  let html = '';
+  res.segments.forEach(seg => {
+    if (seg.hrs <= 0) return;
+    const h = Math.floor(seg.hrs);
+    const m = Math.round((seg.hrs - h) * 60);
+    const dur = h > 0 ? `${h}ч ${m > 0 ? m+'мин' : ''}` : `${m}мин`;
+    html += `<div class="breakdown-row">
+      <span><span class="tag ${seg.tagClass}">${seg.label.split('(')[0].trim()}</span>${fmtTime(seg.from)}–${fmtTime(seg.to)} (${dur.trim()})</span>
+      <span class="breakdown-val">${seg.earn.toFixed(2)} €</span>
+    </div>`;
+  });
+  if (breakMin > 0) {
+    html += `<div class="breakdown-row">
+      <span><span class="tag tag-break">Перерыв</span>${breakMin} мин вычтено</span>
+      <span class="breakdown-val" style="color:var(--text2)">−</span>
+    </div>`;
+  }
+
+  document.getElementById('resultBreakdown').innerHTML = html;
+  document.getElementById('resultBox').classList.add('show');
+}
+
+// ── SAVE MODAL ──
+function openSaveModal() {
+  if (!lastResult) return;
+  const today = new Date();
+  const iso = today.toISOString().slice(0,10);
+  document.getElementById('saveDate').value = iso;
+  document.getElementById('modalDateDisplay').textContent =
+    '💰 ' + lastResult.total.toFixed(2) + ' € · ' + lastResult.startVal + '–' + lastResult.endVal;
+  document.getElementById('saveModal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('saveModal').classList.remove('show');
+}
+function saveEntry() {
+  const date = document.getElementById('saveDate').value;
+  if (!date || !lastResult) return;
+  const data = loadEntries();
+  data[date] = {
+    total: lastResult.total,
+    start: lastResult.startVal,
+    end:   lastResult.endVal,
+    brk:   lastResult.breakMin
+  };
+  saveEntries(data);
+  closeModal();
+  renderCalendar();
+
+  // Show quick feedback
+  const btn = document.querySelector('#resultBox .btn-secondary');
+  btn.textContent = '✓ Сохранено!';
+  btn.style.color = 'var(--green)';
+  setTimeout(() => { btn.textContent = '💾 Сохранить в календарь'; btn.style.color = ''; }, 2000);
+}
+
+// ── CALENDAR ──
+let calYear, calMonth;
+(function() {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+})();
+
+const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                   'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const DAYS_RU = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0;  calYear++; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  document.getElementById('monthLabel').textContent = MONTHS_RU[calMonth] + ' ' + calYear;
+
+  const data = loadEntries();
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0,10);
+
+  // Grid header
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = DAYS_RU.map(d => `<div class="cal-dow">${d}</div>`).join('');
+
+  // First day of month (adjust: Mon=0)
+  const firstDay = new Date(calYear, calMonth, 1);
+  let startDow = firstDay.getDay(); // 0=Sun
+  startDow = (startDow + 6) % 7;   // Mon=0
+
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const prevDays    = new Date(calYear, calMonth, 0).getDate();
+
+  let html = '';
+
+  // Prev month padding
+  for (let i = startDow - 1; i >= 0; i--) {
+    html += `<div class="cal-day other-month">${prevDays - i}</div>`;
+  }
+
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const iso = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const entry = data[iso];
+    const isToday = iso === todayStr;
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (entry)   cls += ' has-entry';
+    const earn = entry ? `<span class="day-earn">${entry.total.toFixed(0)}€</span>` : '';
+    html += `<div class="${cls}" onclick="showDayModal('${iso}')">${d}${earn}</div>`;
+  }
+
+  // Next month padding
+  const total = startDow + daysInMonth;
+  const nextPad = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let i = 1; i <= nextPad; i++) {
+    html += `<div class="cal-day other-month">${i}</div>`;
+  }
+
+  grid.innerHTML += html;
+
+  // Month summary
+  let monthTotal = 0, monthDays = 0;
+  const prefix = `${calYear}-${String(calMonth+1).padStart(2,'0')}-`;
+  Object.keys(data).forEach(k => {
+    if (k.startsWith(prefix)) { monthTotal += data[k].total; monthDays++; }
+  });
+  document.getElementById('monthTotal').textContent = monthTotal.toFixed(2) + ' €';
+  document.getElementById('monthDays').textContent = monthDays;
+
+  // Entries list
+  const keys = Object.keys(data).filter(k => k.startsWith(prefix)).sort();
+  let listHtml = '';
+  if (keys.length === 0) {
+    listHtml = '<div class="empty-state">Нет записей за этот месяц.<br>Рассчитай смену и сохрани её!</div>';
+  } else {
+    keys.forEach(k => {
+      const e = data[k];
+      const parts = k.split('-');
+      const dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
+      const dayName = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][dt.getDay()];
+      const brk = e.brk > 0 ? ` · перерыв ${e.brk}м` : '';
+      listHtml += `<div class="entry-item">
+        <div class="entry-date">
+          <strong>${parts[2]} ${MONTHS_RU[+parts[1]-1].slice(0,3)}, ${dayName}</strong>
+          <span class="entry-time">${e.start} – ${e.end}${brk}</span>
+        </div>
+        <div class="entry-right">
+          <span class="entry-amount">${e.total.toFixed(2)} €</span>
+          <button class="del-btn" onclick="deleteEntry('${k}')">✕</button>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('entriesList').innerHTML = listHtml;
+}
+
+function showDayModal(iso) {
+  const data = loadEntries();
+  const entry = data[iso];
+  const parts = iso.split('-');
+  const dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
+  const dayName = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][dt.getDay()];
+  if (!entry) {
+    // Pre-fill calculator and switch tab
+    const today = new Date();
+    switchTab('calc');
+    document.getElementById('saveDate') && (document.getElementById('saveDate').value = iso);
+    return;
+  }
+  // Show info toast
+  const msg = `${parts[2]} ${MONTHS_RU[+parts[1]-1]}, ${dayName}\n${entry.start}–${entry.end}\nЗаработано: ${entry.total.toFixed(2)} €`;
+  if (confirm(msg + '\n\nУдалить эту запись?')) {
+    deleteEntry(iso);
+  }
+}
+
+function deleteEntry(iso) {
+  const data = loadEntries();
+  delete data[iso];
+  saveEntries(data);
+  renderCalendar();
+}
+
+// ── INIT ──
+renderCalendar();
+</script>
+</body>
+</html>
