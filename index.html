@@ -2,280 +2,435 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Мой заработок</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
   :root {
-    --bg: #0e0f13;
-    --surface: #16181f;
-    --surface2: #1e2029;
-    --border: #2a2d38;
-    --accent: #7c6af7;
-    --accent2: #a78bfa;
+    --bg: #08090d;
+    --bg2: #0d0f16;
+    --surface: rgba(255,255,255,0.035);
+    --surface-solid: #14161f;
+    --surface2: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.08);
+    --border-bright: rgba(255,255,255,0.14);
+    --accent: #8b5cf6;
+    --accent-light: #a78bfa;
+    --accent-glow: rgba(139,92,246,0.5);
+    --cyan: #22d3ee;
     --green: #34d399;
     --amber: #fbbf24;
-    --red: #f87171;
-    --text: #e8eaf0;
-    --text2: #8b8fa8;
-    --text3: #555870;
+    --red: #fb7185;
+    --text: #f4f5fb;
+    --text2: #9498b3;
+    --text3: #5a5e78;
     --mono: 'JetBrains Mono', monospace;
-    --sans: 'Inter', sans-serif;
-    --radius: 16px;
-    --radius-sm: 10px;
+    --sans: 'Sora', sans-serif;
+    --radius: 22px;
+    --radius-sm: 14px;
+    --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body { overflow-x: hidden; }
 
   body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
     min-height: 100vh;
-    padding: 0 0 80px;
+    padding: 0 0 60px;
     -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  /* ── ANIMATED BACKGROUND GLOWS ── */
+  .bg-glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .glow1 {
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+    top: -120px; right: -100px;
+    animation: float1 14s ease-in-out infinite;
+  }
+  .glow2 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, #22d3ee 0%, transparent 70%);
+    bottom: 10%; left: -120px;
+    opacity: 0.25;
+    animation: float2 18s ease-in-out infinite;
+  }
+  @keyframes float1 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(-40px,60px) scale(1.15); }
+  }
+  @keyframes float2 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(50px,-40px) scale(1.1); }
   }
 
   /* ── HEADER ── */
   header {
-    padding: 24px 20px 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 28px 22px 0;
+    animation: dropIn 0.6s var(--ease) both;
   }
   .logo {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(120deg, #fff 30%, var(--accent-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  .logo span { color: var(--accent2); }
+  .logo-sub {
+    font-size: 12px;
+    color: var(--text3);
+    font-weight: 400;
+    margin-top: 2px;
+    letter-spacing: 0.3px;
+  }
 
   /* ── TABS ── */
   .tabs {
     display: flex;
-    gap: 6px;
-    padding: 20px 20px 0;
-  }
-  .tab {
-    flex: 1;
-    padding: 11px 8px;
+    gap: 4px;
+    margin: 22px 22px 0;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
+    border-radius: 18px;
+    padding: 5px;
+    position: relative;
+    animation: dropIn 0.6s var(--ease) 0.08s both;
+    backdrop-filter: blur(20px);
+  }
+  .tab-slider {
+    position: absolute;
+    top: 5px; left: 5px;
+    width: calc(50% - 5px);
+    height: calc(100% - 10px);
+    background: linear-gradient(120deg, var(--accent) 0%, #6d4ee0 100%);
+    border-radius: 13px;
+    box-shadow: 0 6px 20px -4px var(--accent-glow);
+    transition: transform 0.4s var(--ease);
+    z-index: 0;
+  }
+  .tab-slider.right { transform: translateX(100%); }
+  .tab {
+    flex: 1;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
     color: var(--text2);
     font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.18s;
-    text-align: center;
-  }
-  .tab.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
+    font-size: 14px;
     font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s;
+    text-align: center;
+    position: relative;
+    z-index: 1;
   }
+  .tab.active { color: #fff; }
 
   /* ── PAGES ── */
-  .page { display: none; padding: 20px; }
+  .page { display: none; padding: 18px 22px; }
   .page.active { display: block; }
 
-  /* ── SECTION CARD ── */
+  /* ── CARD ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 20px;
+    padding: 22px;
     margin-bottom: 14px;
+    backdrop-filter: blur(20px);
+    animation: cardIn 0.55s var(--ease) both;
   }
-  .card-title {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: var(--text3);
-    margin-bottom: 16px;
+  .card.d1 { animation-delay: 0.05s; }
+  .card.d2 { animation-delay: 0.13s; }
+  .card.d3 { animation-delay: 0.21s; }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes dropIn {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── FORM ELEMENTS ── */
-  .field { margin-bottom: 14px; }
+  .card-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  /* ── FORM ── */
+  .field { margin-bottom: 16px; }
   .field:last-child { margin-bottom: 0; }
   label {
     display: block;
     font-size: 12px;
     color: var(--text2);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-weight: 500;
   }
   input[type="time"], input[type="number"], input[type="date"] {
     width: 100%;
     background: var(--surface2);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
     color: var(--text);
     font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 600;
-    padding: 13px 16px;
+    font-size: 19px;
+    font-weight: 700;
+    padding: 14px 16px;
     outline: none;
-    transition: border-color 0.15s;
+    transition: all 0.25s;
     -webkit-appearance: none;
     appearance: none;
   }
-  input[type="time"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+  input:focus {
     border-color: var(--accent);
+    background: rgba(139,92,246,0.08);
+    box-shadow: 0 0 0 4px rgba(139,92,246,0.12);
   }
-  input[type="number"] { font-size: 16px; }
+  input[type="number"] { font-size: 17px; }
 
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
   /* ── BUTTON ── */
   .btn {
     width: 100%;
-    padding: 15px;
+    padding: 17px;
     border-radius: var(--radius-sm);
     border: none;
     font-family: var(--sans);
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: transform 0.15s var(--ease), box-shadow 0.25s;
     letter-spacing: -0.2px;
+    position: relative;
+    overflow: hidden;
   }
   .btn-primary {
-    background: var(--accent);
+    background: linear-gradient(120deg, var(--accent) 0%, #6d4ee0 100%);
     color: #fff;
+    box-shadow: 0 10px 30px -8px var(--accent-glow);
+    animation: cardIn 0.55s var(--ease) 0.18s both;
   }
-  .btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+  .btn-primary:active { transform: scale(0.96); }
+  .btn-primary::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: translateX(-100%);
+  }
+  .btn-primary:active::after { animation: shine 0.6s; }
+  @keyframes shine { to { transform: translateX(100%); } }
+
   .btn-secondary {
     background: var(--surface2);
-    color: var(--text2);
-    border: 1px solid var(--border);
-    margin-top: 8px;
+    color: var(--text);
+    border: 1px solid var(--border-bright);
+    margin-top: 10px;
   }
-  .btn-danger {
-    background: rgba(248,113,113,0.12);
-    color: var(--red);
-    border: 1px solid rgba(248,113,113,0.2);
-    margin-top: 8px;
-  }
+  .btn-secondary:active { transform: scale(0.97); }
 
-  /* ── RESULT BOX ── */
+  /* ── RESULT ── */
   .result-box {
-    background: linear-gradient(135deg, rgba(124,106,247,0.15) 0%, rgba(167,139,250,0.08) 100%);
-    border: 1px solid rgba(124,106,247,0.35);
+    background: linear-gradient(150deg, rgba(139,92,246,0.18) 0%, rgba(34,211,238,0.06) 100%);
+    border: 1px solid rgba(139,92,246,0.4);
     border-radius: var(--radius);
-    padding: 22px 20px;
-    margin-bottom: 14px;
+    padding: 26px 22px;
+    margin: 16px 0 14px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px -20px var(--accent-glow);
     display: none;
+    position: relative;
+    overflow: hidden;
   }
-  .result-box.show { display: block; }
+  .result-box.show {
+    display: block;
+    animation: popIn 0.6s var(--ease);
+  }
+  @keyframes popIn {
+    0% { opacity: 0; transform: translateY(30px) scale(0.92); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .result-box::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -30%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
   .result-label {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: var(--accent2);
-    margin-bottom: 8px;
+    letter-spacing: 1.5px;
+    color: var(--accent-light);
+    margin-bottom: 10px;
   }
   .result-total {
     font-family: var(--mono);
-    font-size: 42px;
-    font-weight: 600;
+    font-size: 52px;
+    font-weight: 700;
     color: var(--text);
-    letter-spacing: -1px;
+    letter-spacing: -2px;
     line-height: 1;
+    text-shadow: 0 0 40px var(--accent-glow);
   }
-  .result-total span { font-size: 24px; color: var(--accent2); }
+  .result-total span { font-size: 28px; color: var(--accent-light); margin-left: 4px; }
   .result-breakdown {
-    margin-top: 16px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 9px;
   }
   .breakdown-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 8px;
+    padding: 11px 14px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: 12px;
     font-size: 13px;
+    color: var(--text2);
+    animation: rowIn 0.5s var(--ease) both;
+  }
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
   }
   .breakdown-row .tag {
     display: inline-block;
     font-size: 10px;
-    font-weight: 600;
-    padding: 2px 7px;
+    font-weight: 700;
+    padding: 3px 9px;
     border-radius: 20px;
     margin-right: 8px;
   }
-  .tag-base { background: rgba(52,211,153,0.15); color: var(--green); }
-  .tag-plus20 { background: rgba(251,191,36,0.15); color: var(--amber); }
-  .tag-plus50 { background: rgba(248,113,113,0.15); color: var(--red); }
-  .tag-break { background: rgba(139,143,168,0.15); color: var(--text2); }
+  .tag-base { background: rgba(52,211,153,0.18); color: var(--green); }
+  .tag-plus20 { background: rgba(251,191,36,0.18); color: var(--amber); }
+  .tag-plus50 { background: rgba(251,113,133,0.18); color: var(--red); }
+  .tag-break { background: rgba(148,152,179,0.15); color: var(--text2); }
   .breakdown-val {
     font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
     color: var(--text);
   }
 
-  /* ── TARIFF INFO ── */
+  /* ── TARIFF ── */
   .tariff-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 13px 0;
     border-bottom: 1px solid var(--border);
     font-size: 13px;
     color: var(--text2);
   }
   .tariff-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .tariff-row strong { color: var(--text); font-family: var(--mono); font-weight: 600; }
+  .tariff-row:first-child { padding-top: 0; }
+  .tariff-row strong { color: var(--text); font-family: var(--mono); font-weight: 700; font-size: 14px; }
+  .pct { font-weight: 700; font-size: 11px; }
+  .pct.p20 { color: var(--amber); }
+  .pct.p50 { color: var(--red); }
+
+  /* ── MONTH SUMMARY ── */
+  .month-summary {
+    background: linear-gradient(150deg, rgba(52,211,153,0.14) 0%, rgba(34,211,238,0.05) 100%);
+    border: 1px solid rgba(52,211,153,0.3);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 16px 40px -20px rgba(52,211,153,0.4);
+    animation: cardIn 0.55s var(--ease) both;
+  }
+  .summary-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+  .summary-amount {
+    font-family: var(--mono);
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: -1px;
+    text-shadow: 0 0 30px rgba(52,211,153,0.4);
+  }
+  .summary-days { font-size: 12px; color: var(--text2); text-align: right; }
+  .summary-days strong { display: block; font-size: 28px; color: var(--text); font-family: var(--mono); margin-bottom: 2px; }
 
   /* ── CALENDAR ── */
   .month-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
   .month-title {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 17px;
+    font-weight: 700;
     color: var(--text);
-    letter-spacing: -0.3px;
-    text-transform: capitalize;
+    letter-spacing: -0.5px;
   }
   .nav-btn {
-    width: 36px; height: 36px;
+    width: 40px; height: 40px;
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 12px;
     color: var(--text2);
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
+    transition: all 0.2s var(--ease);
   }
-  .nav-btn:active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav-btn:active {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+    transform: scale(0.9);
+  }
 
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
-    margin-bottom: 16px;
+    gap: 4px;
   }
   .cal-dow {
     text-align: center;
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text3);
-    padding: 4px 0 8px;
+    padding: 4px 0 10px;
     letter-spacing: 0.5px;
   }
   .cal-day {
@@ -284,149 +439,169 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    font-size: 13px;
+    border-radius: 11px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text2);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s var(--ease);
     position: relative;
     gap: 2px;
+    animation: dayIn 0.4s var(--ease) both;
   }
-  .cal-day:active { transform: scale(0.92); }
-  .cal-day.other-month { color: var(--text3); opacity: 0.5; }
-  .cal-day.today { border: 1px solid var(--accent); color: var(--accent2); }
+  @keyframes dayIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+  .cal-day:active { transform: scale(0.88); }
+  .cal-day.other-month { color: var(--text3); opacity: 0.35; }
+  .cal-day.today {
+    border: 1.5px solid var(--accent);
+    color: var(--accent-light);
+    font-weight: 700;
+  }
   .cal-day.has-entry {
-    background: rgba(124,106,247,0.18);
-    color: var(--text);
+    background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(139,92,246,0.12));
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 14px -4px var(--accent-glow);
   }
   .cal-day.has-entry .day-earn {
     font-family: var(--mono);
     font-size: 8px;
-    font-weight: 600;
-    color: var(--accent2);
+    font-weight: 700;
+    color: var(--accent-light);
     line-height: 1;
   }
 
-  /* ── MONTH SUMMARY ── */
-  .month-summary {
-    background: linear-gradient(135deg, rgba(52,211,153,0.1) 0%, rgba(52,211,153,0.04) 100%);
-    border: 1px solid rgba(52,211,153,0.25);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .summary-label { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
-  .summary-amount {
-    font-family: var(--mono);
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--green);
-    letter-spacing: -0.5px;
-  }
-  .summary-days { font-size: 12px; color: var(--text2); text-align: right; }
-  .summary-days strong { display: block; font-size: 22px; color: var(--text); font-family: var(--mono); }
-
-  /* ── ENTRIES LIST ── */
+  /* ── ENTRIES ── */
   .entry-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 14px 0;
     border-bottom: 1px solid var(--border);
+    animation: rowIn 0.45s var(--ease) both;
   }
-  .entry-item:last-child { border-bottom: none; }
-  .entry-date { font-size: 13px; color: var(--text2); }
-  .entry-date strong { display: block; font-size: 15px; color: var(--text); font-weight: 600; margin-bottom: 1px; }
+  .entry-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .entry-item:first-child { padding-top: 0; }
+  .entry-date strong { display: block; font-size: 15px; color: var(--text); font-weight: 600; margin-bottom: 3px; }
   .entry-time { font-family: var(--mono); font-size: 11px; color: var(--text3); }
-  .entry-right { text-align: right; display: flex; align-items: center; gap: 10px; }
+  .entry-right { text-align: right; display: flex; align-items: center; gap: 12px; }
   .entry-amount {
     font-family: var(--mono);
-    font-size: 17px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: var(--green);
   }
   .del-btn {
-    width: 28px; height: 28px;
-    background: rgba(248,113,113,0.1);
+    width: 30px; height: 30px;
+    background: rgba(251,113,133,0.12);
     border: none;
-    border-radius: 6px;
+    border-radius: 9px;
     color: var(--red);
     font-size: 14px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
+    transition: all 0.2s var(--ease);
   }
-  .del-btn:active { background: rgba(248,113,113,0.25); }
+  .del-btn:active { background: rgba(251,113,133,0.3); transform: scale(0.85); }
 
   .empty-state {
     text-align: center;
-    padding: 30px 20px;
+    padding: 34px 20px;
     color: var(--text3);
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.7;
   }
+  .empty-state .emoji { font-size: 32px; display: block; margin-bottom: 10px; opacity: 0.6; }
 
   /* ── MODAL ── */
   .modal-overlay {
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(8px);
     z-index: 100;
     display: none;
     align-items: flex-end;
     justify-content: center;
   }
-  .modal-overlay.show { display: flex; }
+  .modal-overlay.show { display: flex; animation: fadeIn 0.25s; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px 20px 0 0;
-    padding: 24px 20px 40px;
+    background: var(--surface-solid);
+    border: 1px solid var(--border-bright);
+    border-radius: 26px 26px 0 0;
+    padding: 14px 22px 42px;
     width: 100%;
     max-width: 480px;
-    animation: slideUp 0.25s ease;
+    animation: slideUp 0.35s var(--ease);
   }
   @keyframes slideUp {
-    from { transform: translateY(40px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 40px; height: 5px;
+    background: var(--border-bright);
+    border-radius: 3px;
+    margin: 0 auto 20px;
   }
   .modal-title {
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 700;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     color: var(--text);
+    letter-spacing: -0.4px;
   }
   .modal-date-display {
     font-family: var(--mono);
     font-size: 14px;
-    color: var(--accent2);
-    margin-bottom: 18px;
-    background: rgba(124,106,247,0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    display: inline-block;
+    font-weight: 700;
+    color: var(--accent-light);
+    margin-bottom: 20px;
+    background: rgba(139,92,246,0.12);
+    border: 1px solid rgba(139,92,246,0.25);
+    padding: 12px 16px;
+    border-radius: 12px;
   }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--green);
+    color: #04140d;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 24px;
+    border-radius: 14px;
+    box-shadow: 0 14px 40px -8px rgba(52,211,153,0.5);
+    z-index: 200;
+    transition: transform 0.4s var(--ease);
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+
 <header>
-  <div class="logo">Мой<span>Заработок</span></div>
+  <div class="logo">Мой Заработок</div>
+  <div class="logo-sub">калькулятор смен · евро</div>
 </header>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('calc')">Калькулятор</button>
-  <button class="tab" onclick="switchTab('cal')">Календарь</button>
+  <div class="tab-slider" id="tabSlider"></div>
+  <button class="tab active" id="tab0" onclick="switchTab('calc')">Калькулятор</button>
+  <button class="tab" id="tab1" onclick="switchTab('cal')">Календарь</button>
 </div>
 
-<!-- ══════════════ CALCULATOR PAGE ══════════════ -->
+<!-- ══════════ CALCULATOR ══════════ -->
 <div class="page active" id="page-calc">
 
-  <div class="card" style="margin-top:20px">
+  <div class="card d1">
     <div class="card-title">Рабочее время</div>
     <div class="row2">
       <div class="field">
@@ -438,53 +613,53 @@
         <input type="time" id="timeEnd" value="17:00">
       </div>
     </div>
-    <div class="field" style="margin-top:14px">
+    <div class="field" style="margin-top:16px">
       <label>Перерыв (минут)</label>
-      <input type="number" id="breakMin" value="0" min="0" max="480" placeholder="0">
+      <input type="number" id="breakMin" value="0" min="0" max="480" inputmode="numeric" placeholder="0">
     </div>
   </div>
 
-  <button class="btn btn-primary" onclick="calculate()">Рассчитать →</button>
+  <button class="btn btn-primary" onclick="calculate()">Рассчитать заработок</button>
 
   <div class="result-box" id="resultBox">
     <div class="result-label">Заработок за смену</div>
-    <div class="result-total" id="resultTotal">0 <span>€</span></div>
+    <div class="result-total" id="resultTotal">0.00 <span>€</span></div>
     <div class="result-breakdown" id="resultBreakdown"></div>
-    <button class="btn btn-secondary" onclick="openSaveModal()" style="margin-top:18px">💾 Сохранить в календарь</button>
+    <button class="btn btn-secondary" onclick="openSaveModal()" style="margin-top:18px">Сохранить в календарь</button>
   </div>
 
-  <div class="card">
+  <div class="card d2">
     <div class="card-title">Твои ставки</div>
     <div class="tariff-row">
-      <span>Базовая ставка (до 18:30)</span>
+      <span>Базовая (до 18:30)</span>
       <strong>15.35 €/ч</strong>
     </div>
     <div class="tariff-row">
-      <span>18:30 – 20:00 <span style="color:var(--amber)">+20%</span></span>
+      <span>18:30–20:00 · <span class="pct p20">+20%</span></span>
       <strong>18.42 €/ч</strong>
     </div>
     <div class="tariff-row">
-      <span>После 20:00 <span style="color:var(--red)">+50%</span></span>
+      <span>После 20:00 · <span class="pct p50">+50%</span></span>
       <strong>23.03 €/ч</strong>
     </div>
   </div>
 </div>
 
-<!-- ══════════════ CALENDAR PAGE ══════════════ -->
+<!-- ══════════ CALENDAR ══════════ -->
 <div class="page" id="page-cal">
 
-  <div class="month-summary" id="monthSummary" style="margin-top:20px">
+  <div class="month-summary">
     <div>
       <div class="summary-label">Итого за месяц</div>
       <div class="summary-amount" id="monthTotal">0.00 €</div>
     </div>
     <div class="summary-days">
       <strong id="monthDays">0</strong>
-      рабочих дней
+      смен
     </div>
   </div>
 
-  <div class="card">
+  <div class="card d1">
     <div class="month-nav">
       <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
       <div class="month-title" id="monthLabel"></div>
@@ -493,296 +668,317 @@
     <div class="cal-grid" id="calGrid"></div>
   </div>
 
-  <div class="card">
+  <div class="card d2">
     <div class="card-title">Записи за месяц</div>
     <div id="entriesList"></div>
   </div>
 
 </div>
 
-<!-- ══════════════ MODAL: SAVE TO CALENDAR ══════════════ -->
-<div class="modal-overlay" id="saveModal">
+<!-- ══════════ MODAL ══════════ -->
+<div class="modal-overlay" id="saveModal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">Сохранить смену</div>
     <div class="modal-date-display" id="modalDateDisplay"></div>
     <div class="field">
-      <label>Дата</label>
+      <label>Выбери дату</label>
       <input type="date" id="saveDate">
     </div>
-    <button class="btn btn-primary" onclick="saveEntry()">Сохранить</button>
+    <button class="btn btn-primary" onclick="saveEntry()" style="margin-top:16px">Сохранить</button>
     <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
   </div>
 </div>
 
-<script>
-// ── RATES ──
-const BASE = 15.35;
-const RATE_MID = BASE * 1.20;   // 18:30–20:00
-const RATE_LATE = BASE * 1.50;  // 20:00+
-const BREAK1 = { h: 18, m: 30 }; // 18:30
-const BREAK2 = { h: 20, m: 0  }; // 20:00
+<div class="toast" id="toast">✓ Сохранено!</div>
 
-// ── STORAGE ──
+<script>
+// ═══ RATES ═══
+var BASE = 15.35;
+var RATE_MID = BASE * 1.20;
+var RATE_LATE = BASE * 1.50;
+var BREAK1 = 18 * 60 + 30; // 18:30 в минутах
+var BREAK2 = 20 * 60;      // 20:00 в минутах
+
+// ═══ STORAGE ═══
 function loadEntries() {
   try { return JSON.parse(localStorage.getItem('wage_entries') || '{}'); }
-  catch(e) { return {}; }
+  catch (e) { return {}; }
 }
 function saveEntries(data) {
-  localStorage.setItem('wage_entries', JSON.stringify(data));
+  try { localStorage.setItem('wage_entries', JSON.stringify(data)); }
+  catch (e) {}
 }
 
-// ── CALC STATE ──
-let lastResult = null;
+var lastResult = null;
 
-// ── TABS ──
+// ═══ TABS ═══
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0)====(tab==='calc')));
-  document.getElementById('page-calc').classList.toggle('active', tab==='calc');
-  document.getElementById('page-cal').classList.toggle('active', tab==='cal');
-  if (tab==='cal') renderCalendar();
+  var isCalc = (tab === 'calc');
+  document.getElementById('tab0').classList.toggle('active', isCalc);
+  document.getElementById('tab1').classList.toggle('active', !isCalc);
+  document.getElementById('tabSlider').classList.toggle('right', !isCalc);
+  document.getElementById('page-calc').classList.toggle('active', isCalc);
+  document.getElementById('page-cal').classList.toggle('active', !isCalc);
+  if (!isCalc) renderCalendar();
 }
 
-// ── CALCULATE ──
-function timeToMin(h, m) { return h * 60 + m; }
-
-function calcEarnings(startH, startM, endH, endM, breakMins) {
-  let s = timeToMin(startH, startM);
-  let e = timeToMin(endH, endM);
+// ═══ CALC LOGIC ═══
+function calcEarnings(startMin, endMin, breakMins) {
+  var s = startMin;
+  var e = endMin;
   if (e <= s) e += 24 * 60; // ночная смена
   e -= breakMins;
   if (e <= s) return null;
 
-  const b1 = timeToMin(BREAK1.h, BREAK1.m);
-  const b2 = timeToMin(BREAK2.h, BREAK2.m);
-
-  let segments = [];
-
+  var segments = [];
   function addSeg(from, to, rate, label, tagClass) {
     if (to <= from) return;
-    const hrs = (to - from) / 60;
-    const earn = hrs * rate;
-    segments.push({ from, to, hrs, earn, label, tagClass });
+    var hrs = (to - from) / 60;
+    segments.push({ from: from, to: to, hrs: hrs, earn: hrs * rate, label: label, tagClass: tagClass });
   }
 
-  // base: s → min(e, b1)
-  addSeg(s, Math.min(e, b1), BASE, 'Базовая ставка', 'tag-base');
-  // mid: max(s,b1) → min(e, b2)
-  addSeg(Math.max(s, b1), Math.min(e, b2), RATE_MID, '+20% (18:30–20:00)', 'tag-plus20');
-  // late: max(s,b2) → e
-  addSeg(Math.max(s, b2), e, RATE_LATE, '+50% (после 20:00)', 'tag-plus50');
+  addSeg(s, Math.min(e, BREAK1), BASE, 'Базовая', 'tag-base');
+  addSeg(Math.max(s, BREAK1), Math.min(e, BREAK2), RATE_MID, '+20%', 'tag-plus20');
+  addSeg(Math.max(s, BREAK2), e, RATE_LATE, '+50%', 'tag-plus50');
 
-  const total = segments.reduce((a, b) => a + b.earn, 0);
-  return { total, segments, breakMins };
+  var total = 0;
+  for (var i = 0; i < segments.length; i++) total += segments[i].earn;
+  return { total: total, segments: segments, breakMins: breakMins };
 }
 
 function fmtTime(totalMin) {
-  let m = ((totalMin % 1440) + 1440) % 1440;
-  return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+  var m = ((totalMin % 1440) + 1440) % 1440;
+  return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
 }
 
+function fmtDuration(hrs) {
+  var h = Math.floor(hrs);
+  var m = Math.round((hrs - h) * 60);
+  if (h > 0 && m > 0) return h + 'ч ' + m + 'мин';
+  if (h > 0) return h + 'ч';
+  return m + 'мин';
+}
+
+// ═══ ANIMATED COUNTER ═══
+function animateNumber(el, target) {
+  var start = 0;
+  var duration = 700;
+  var startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    var p = Math.min((ts - startTime) / duration, 1);
+    var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    var val = (start + (target - start) * eased).toFixed(2);
+    el.innerHTML = val + ' <span>€</span>';
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ═══ CALCULATE ═══
 function calculate() {
-  const startVal = document.getElementById('timeStart').value;
-  const endVal   = document.getElementById('timeEnd').value;
-  const breakMin = parseInt(document.getElementById('breakMin').value) || 0;
+  var startVal = document.getElementById('timeStart').value;
+  var endVal = document.getElementById('timeEnd').value;
+  var breakMin = parseInt(document.getElementById('breakMin').value, 10) || 0;
 
   if (!startVal || !endVal) { alert('Укажи время начала и конца работы'); return; }
 
-  const [sh, sm] = startVal.split(':').map(Number);
-  const [eh, em] = endVal.split(':').map(Number);
+  var sp = startVal.split(':');
+  var ep = endVal.split(':');
+  var startMin = parseInt(sp[0], 10) * 60 + parseInt(sp[1], 10);
+  var endMin = parseInt(ep[0], 10) * 60 + parseInt(ep[1], 10);
 
-  const res = calcEarnings(sh, sm, eh, em, breakMin);
-  if (!res) { alert('Конец работы должен быть позже начала'); return; }
+  var res = calcEarnings(startMin, endMin, breakMin);
+  if (!res) { alert('Проверь время: конец должен быть позже начала, а перерыв не больше смены'); return; }
 
-  lastResult = { ...res, startVal, endVal, breakMin };
+  lastResult = { total: res.total, segments: res.segments, startVal: startVal, endVal: endVal, breakMin: breakMin };
 
-  document.getElementById('resultTotal').innerHTML = res.total.toFixed(2) + ' <span>€</span>';
+  var box = document.getElementById('resultBox');
+  box.classList.remove('show');
+  void box.offsetWidth; // restart animation
+  box.classList.add('show');
 
-  let html = '';
-  res.segments.forEach(seg => {
-    if (seg.hrs <= 0) return;
-    const h = Math.floor(seg.hrs);
-    const m = Math.round((seg.hrs - h) * 60);
-    const dur = h > 0 ? `${h}ч ${m > 0 ? m+'мин' : ''}` : `${m}мин`;
-    html += `<div class="breakdown-row">
-      <span><span class="tag ${seg.tagClass}">${seg.label.split('(')[0].trim()}</span>${fmtTime(seg.from)}–${fmtTime(seg.to)} (${dur.trim()})</span>
-      <span class="breakdown-val">${seg.earn.toFixed(2)} €</span>
-    </div>`;
-  });
-  if (breakMin > 0) {
-    html += `<div class="breakdown-row">
-      <span><span class="tag tag-break">Перерыв</span>${breakMin} мин вычтено</span>
-      <span class="breakdown-val" style="color:var(--text2)">−</span>
-    </div>`;
+  animateNumber(document.getElementById('resultTotal'), res.total);
+
+  var html = '';
+  var delay = 0;
+  for (var i = 0; i < res.segments.length; i++) {
+    var seg = res.segments[i];
+    if (seg.hrs <= 0) continue;
+    html += '<div class="breakdown-row" style="animation-delay:' + delay + 's">' +
+      '<span><span class="tag ' + seg.tagClass + '">' + seg.label + '</span>' +
+      fmtTime(seg.from) + '–' + fmtTime(seg.to) + ' · ' + fmtDuration(seg.hrs) + '</span>' +
+      '<span class="breakdown-val">' + seg.earn.toFixed(2) + ' €</span></div>';
+    delay += 0.07;
   }
-
+  if (breakMin > 0) {
+    html += '<div class="breakdown-row" style="animation-delay:' + delay + 's">' +
+      '<span><span class="tag tag-break">Перерыв</span>' + breakMin + ' мин вычтено</span>' +
+      '<span class="breakdown-val" style="color:var(--text2)">−</span></div>';
+  }
   document.getElementById('resultBreakdown').innerHTML = html;
-  document.getElementById('resultBox').classList.add('show');
+
+  setTimeout(function () { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
 }
 
-// ── SAVE MODAL ──
+// ═══ TOAST ═══
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function () { t.classList.remove('show'); }, 2200);
+}
+
+// ═══ SAVE MODAL ═══
 function openSaveModal() {
   if (!lastResult) return;
-  const today = new Date();
-  const iso = today.toISOString().slice(0,10);
+  var today = new Date();
+  var iso = isoOf(today);
   document.getElementById('saveDate').value = iso;
   document.getElementById('modalDateDisplay').textContent =
-    '💰 ' + lastResult.total.toFixed(2) + ' € · ' + lastResult.startVal + '–' + lastResult.endVal;
+    lastResult.total.toFixed(2) + ' €  ·  ' + lastResult.startVal + '–' + lastResult.endVal;
   document.getElementById('saveModal').classList.add('show');
 }
 function closeModal() {
   document.getElementById('saveModal').classList.remove('show');
 }
 function saveEntry() {
-  const date = document.getElementById('saveDate').value;
+  var date = document.getElementById('saveDate').value;
   if (!date || !lastResult) return;
-  const data = loadEntries();
+  var data = loadEntries();
   data[date] = {
     total: lastResult.total,
     start: lastResult.startVal,
-    end:   lastResult.endVal,
-    brk:   lastResult.breakMin
+    end: lastResult.endVal,
+    brk: lastResult.breakMin
   };
   saveEntries(data);
   closeModal();
-  renderCalendar();
-
-  // Show quick feedback
-  const btn = document.querySelector('#resultBox .btn-secondary');
-  btn.textContent = '✓ Сохранено!';
-  btn.style.color = 'var(--green)';
-  setTimeout(() => { btn.textContent = '💾 Сохранить в календарь'; btn.style.color = ''; }, 2000);
+  showToast('✓ Смена сохранена!');
 }
 
-// ── CALENDAR ──
-let calYear, calMonth;
-(function() {
-  const now = new Date();
+// ═══ CALENDAR ═══
+var calYear, calMonth;
+(function () {
+  var now = new Date();
   calYear = now.getFullYear();
   calMonth = now.getMonth();
 })();
 
-const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь',
-                   'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-const DAYS_RU = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+var MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+var MONTHS_SHORT = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+var DAYS_RU = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+var DAYS_SHORT = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+function pad(n) { return String(n).padStart(2, '0'); }
+function isoOf(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
 
 function changeMonth(dir) {
   calMonth += dir;
-  if (calMonth < 0)  { calMonth = 11; calYear--; }
-  if (calMonth > 11) { calMonth = 0;  calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
   renderCalendar();
 }
 
 function renderCalendar() {
   document.getElementById('monthLabel').textContent = MONTHS_RU[calMonth] + ' ' + calYear;
 
-  const data = loadEntries();
-  const now = new Date();
-  const todayStr = now.toISOString().slice(0,10);
+  var data = loadEntries();
+  var todayStr = isoOf(new Date());
 
-  // Grid header
-  const grid = document.getElementById('calGrid');
-  grid.innerHTML = DAYS_RU.map(d => `<div class="cal-dow">${d}</div>`).join('');
+  var grid = document.getElementById('calGrid');
+  var head = '';
+  for (var i = 0; i < DAYS_RU.length; i++) head += '<div class="cal-dow">' + DAYS_RU[i] + '</div>';
 
-  // First day of month (adjust: Mon=0)
-  const firstDay = new Date(calYear, calMonth, 1);
-  let startDow = firstDay.getDay(); // 0=Sun
-  startDow = (startDow + 6) % 7;   // Mon=0
+  var firstDay = new Date(calYear, calMonth, 1);
+  var startDow = (firstDay.getDay() + 6) % 7; // Mon=0
+  var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  var prevDays = new Date(calYear, calMonth, 0).getDate();
 
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  const prevDays    = new Date(calYear, calMonth, 0).getDate();
-
-  let html = '';
-
-  // Prev month padding
-  for (let i = startDow - 1; i >= 0; i--) {
-    html += `<div class="cal-day other-month">${prevDays - i}</div>`;
+  var body = '';
+  for (var i = startDow - 1; i >= 0; i--) {
+    body += '<div class="cal-day other-month">' + (prevDays - i) + '</div>';
   }
-
-  // Current month
-  for (let d = 1; d <= daysInMonth; d++) {
-    const iso = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const entry = data[iso];
-    const isToday = iso === todayStr;
-    let cls = 'cal-day';
-    if (isToday) cls += ' today';
-    if (entry)   cls += ' has-entry';
-    const earn = entry ? `<span class="day-earn">${entry.total.toFixed(0)}€</span>` : '';
-    html += `<div class="${cls}" onclick="showDayModal('${iso}')">${d}${earn}</div>`;
+  for (var d = 1; d <= daysInMonth; d++) {
+    var iso = calYear + '-' + pad(calMonth + 1) + '-' + pad(d);
+    var entry = data[iso];
+    var cls = 'cal-day';
+    if (iso === todayStr) cls += ' today';
+    if (entry) cls += ' has-entry';
+    var earn = entry ? '<span class="day-earn">' + Math.round(entry.total) + '€</span>' : '';
+    var delay = (d * 0.012).toFixed(3);
+    body += '<div class="' + cls + '" style="animation-delay:' + delay + 's" onclick="dayClick(\'' + iso + '\')">' + d + earn + '</div>';
   }
-
-  // Next month padding
-  const total = startDow + daysInMonth;
-  const nextPad = total % 7 === 0 ? 0 : 7 - (total % 7);
-  for (let i = 1; i <= nextPad; i++) {
-    html += `<div class="cal-day other-month">${i}</div>`;
+  var totalCells = startDow + daysInMonth;
+  var nextPad = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (var i = 1; i <= nextPad; i++) {
+    body += '<div class="cal-day other-month">' + i + '</div>';
   }
+  grid.innerHTML = head + body;
 
-  grid.innerHTML += html;
-
-  // Month summary
-  let monthTotal = 0, monthDays = 0;
-  const prefix = `${calYear}-${String(calMonth+1).padStart(2,'0')}-`;
-  Object.keys(data).forEach(k => {
-    if (k.startsWith(prefix)) { monthTotal += data[k].total; monthDays++; }
-  });
+  // Summary
+  var monthTotal = 0, monthDays = 0;
+  var prefix = calYear + '-' + pad(calMonth + 1) + '-';
+  for (var k in data) {
+    if (data.hasOwnProperty(k) && k.indexOf(prefix) === 0) { monthTotal += data[k].total; monthDays++; }
+  }
   document.getElementById('monthTotal').textContent = monthTotal.toFixed(2) + ' €';
   document.getElementById('monthDays').textContent = monthDays;
 
   // Entries list
-  const keys = Object.keys(data).filter(k => k.startsWith(prefix)).sort();
-  let listHtml = '';
+  var keys = [];
+  for (var k in data) if (data.hasOwnProperty(k) && k.indexOf(prefix) === 0) keys.push(k);
+  keys.sort();
+
+  var listHtml = '';
   if (keys.length === 0) {
-    listHtml = '<div class="empty-state">Нет записей за этот месяц.<br>Рассчитай смену и сохрани её!</div>';
+    listHtml = '<div class="empty-state"><span class="emoji">🗓️</span>Нет записей за этот месяц.<br>Рассчитай смену и сохрани её!</div>';
   } else {
-    keys.forEach(k => {
-      const e = data[k];
-      const parts = k.split('-');
-      const dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
-      const dayName = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][dt.getDay()];
-      const brk = e.brk > 0 ? ` · перерыв ${e.brk}м` : '';
-      listHtml += `<div class="entry-item">
-        <div class="entry-date">
-          <strong>${parts[2]} ${MONTHS_RU[+parts[1]-1].slice(0,3)}, ${dayName}</strong>
-          <span class="entry-time">${e.start} – ${e.end}${brk}</span>
-        </div>
-        <div class="entry-right">
-          <span class="entry-amount">${e.total.toFixed(2)} €</span>
-          <button class="del-btn" onclick="deleteEntry('${k}')">✕</button>
-        </div>
-      </div>`;
-    });
+    var delay = 0;
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      var e = data[key];
+      var p = key.split('-');
+      var dt = new Date(+p[0], +p[1] - 1, +p[2]);
+      var dayName = DAYS_SHORT[dt.getDay()];
+      var brk = e.brk > 0 ? ' · перерыв ' + e.brk + 'м' : '';
+      listHtml += '<div class="entry-item" style="animation-delay:' + delay + 's">' +
+        '<div class="entry-date"><strong>' + p[2] + ' ' + MONTHS_SHORT[+p[1] - 1] + ', ' + dayName + '</strong>' +
+        '<span class="entry-time">' + e.start + ' – ' + e.end + brk + '</span></div>' +
+        '<div class="entry-right"><span class="entry-amount">' + e.total.toFixed(2) + ' €</span>' +
+        '<button class="del-btn" onclick="deleteEntry(\'' + key + '\', event)">✕</button></div></div>';
+      delay += 0.05;
+    }
   }
   document.getElementById('entriesList').innerHTML = listHtml;
 }
 
-function showDayModal(iso) {
-  const data = loadEntries();
-  const entry = data[iso];
-  const parts = iso.split('-');
-  const dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
-  const dayName = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][dt.getDay()];
+function dayClick(iso) {
+  var data = loadEntries();
+  var entry = data[iso];
+  var p = iso.split('-');
+  var dt = new Date(+p[0], +p[1] - 1, +p[2]);
+  var dayName = DAYS_SHORT[dt.getDay()];
   if (!entry) {
-    // Pre-fill calculator and switch tab
-    const today = new Date();
     switchTab('calc');
-    document.getElementById('saveDate') && (document.getElementById('saveDate').value = iso);
     return;
   }
-  // Show info toast
-  const msg = `${parts[2]} ${MONTHS_RU[+parts[1]-1]}, ${dayName}\n${entry.start}–${entry.end}\nЗаработано: ${entry.total.toFixed(2)} €`;
-  if (confirm(msg + '\n\nУдалить эту запись?')) {
-    deleteEntry(iso);
-  }
+  var msg = p[2] + ' ' + MONTHS_RU[+p[1] - 1] + ', ' + dayName + '\n' +
+    entry.start + '–' + entry.end + '\nЗаработано: ' + entry.total.toFixed(2) + ' €\n\nУдалить эту запись?';
+  if (confirm(msg)) deleteEntry(iso);
 }
 
-function deleteEntry(iso) {
-  const data = loadEntries();
+function deleteEntry(iso, ev) {
+  if (ev) ev.stopPropagation();
+  var data = loadEntries();
   delete data[iso];
   saveEntries(data);
   renderCalendar();
 }
 
-// ── INIT ──
+// ═══ INIT ═══
 renderCalendar();
 </script>
 </body>
