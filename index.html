@@ -256,9 +256,9 @@
 
   <div class="card d2">
     <div class="card-title">Твои ставки</div>
-    <div class="tariff-row"><span>Базовая (до 18:30)</span><strong>15.35 €/ч</strong></div>
-    <div class="tariff-row"><span>18:30–20:00 · <span class="pct p20">+20%</span></span><strong>18.42 €/ч</strong></div>
-    <div class="tariff-row"><span>После 20:00 · <span class="pct p50">+50%</span></span><strong>23.03 €/ч</strong></div>
+    <div class="tariff-row"><span>Базовая (до 18:30)</span><strong id="tRateBase">16.10 €/ч</strong></div>
+    <div class="tariff-row"><span>18:30–20:00 · <span class="pct p20">+20%</span></span><strong id="tRateMid">19.32 €/ч</strong></div>
+    <div class="tariff-row"><span>После 20:00 · <span class="pct p50">+50%</span></span><strong id="tRateLate">24.15 €/ч</strong></div>
   </div>
 </div>
 
@@ -341,9 +341,9 @@
 
 <script>
 // ═══ RATES ═══
-var BASE = 15.35;
-var RATE_MID = BASE * 1.20;
-var RATE_LATE = BASE * 1.50;
+// Базовая ставка. Старые записи помнят свою ставку (OLD_BASE), новые считаются по CURRENT_BASE.
+var OLD_BASE = 15.35;      // ставка до повышения (для записей без поля base)
+var CURRENT_BASE = 16.10;  // действующая ставка
 var B1 = 18 * 60 + 30; // 18:30
 var B2 = 20 * 60;      // 20:00
 
@@ -376,8 +376,9 @@ function pluralRu(n, forms) {
 }
 
 // ═══ CORE CALCULATION ═══
-function computeShift(startStr, endStr, bStartStr, bEndStr) {
+function computeShift(startStr, endStr, bStartStr, bEndStr, base) {
   if (!startStr || !endStr) return null;
+  if (!base) base = CURRENT_BASE;
   var s = parseHM(startStr), e = parseHM(endStr);
   if (e <= s) e += 1440; // ночная смена
 
@@ -391,9 +392,9 @@ function computeShift(startStr, endStr, bStartStr, bEndStr) {
   }
 
   var rates = [
-    { key: 'base', label: 'Базовая', tag: 'tag-base', color: '#34d399', from: -1e9, to: B1, rate: BASE },
-    { key: 'mid',  label: '+20%',    tag: 'tag-plus20', color: '#fbbf24', from: B1, to: B2, rate: RATE_MID },
-    { key: 'late', label: '+50%',    tag: 'tag-plus50', color: '#fb7185', from: B2, to: 1e9, rate: RATE_LATE }
+    { key: 'base', label: 'Базовая', tag: 'tag-base', color: '#34d399', from: -1e9, to: B1, rate: base },
+    { key: 'mid',  label: '+20%',    tag: 'tag-plus20', color: '#fbbf24', from: B1, to: B2, rate: base * 1.20 },
+    { key: 'late', label: '+50%',    tag: 'tag-plus50', color: '#fb7185', from: B2, to: 1e9, rate: base * 1.50 }
   ];
 
   var segments = [], total = 0;
@@ -553,6 +554,7 @@ function saveEntry() {
   var data = loadEntries();
   data[date] = {
     total: lastResult.res.total,
+    base: CURRENT_BASE,
     start: lastResult.startVal,
     end: lastResult.endVal,
     bStart: lastResult.bStart || null,
@@ -565,6 +567,7 @@ function saveEntry() {
 
 // ═══ SHIFT MODAL (from calendar) ═══
 var currentShiftDate = null;
+var currentShiftBase = CURRENT_BASE;
 var modalBreakOn = false;
 
 function fmtDateRu(iso) {
@@ -579,7 +582,9 @@ function openShiftModal(iso) {
   var data = loadEntries();
   var entry = data[iso];
 
-  document.getElementById('shiftSub').textContent = fmtDateRu(iso);
+  currentShiftBase = (entry && entry.base) ? entry.base : (entry ? OLD_BASE : CURRENT_BASE);
+  var rateNote = (currentShiftBase !== CURRENT_BASE) ? ' · ставка ' + currentShiftBase.toFixed(2) + ' €/ч' : '';
+  document.getElementById('shiftSub').textContent = fmtDateRu(iso) + rateNote;
 
   if (entry) {
     document.getElementById('shiftTitle').textContent = 'Редактировать смену';
@@ -632,7 +637,7 @@ function updateModalPreview() {
   var e = document.getElementById('mEnd').value;
   var bs = modalBreakOn ? document.getElementById('mBreakStart').value : null;
   var be = modalBreakOn ? document.getElementById('mBreakEnd').value : null;
-  var res = computeShift(s, e, bs, be);
+  var res = computeShift(s, e, bs, be, currentShiftBase);
   document.getElementById('mPreview').textContent = res ? res.total.toFixed(2) + ' €' : '— €';
 }
 
@@ -642,11 +647,11 @@ function saveShiftFromModal() {
   var bs = modalBreakOn ? document.getElementById('mBreakStart').value : null;
   var be = modalBreakOn ? document.getElementById('mBreakEnd').value : null;
   if (modalBreakOn && (!bs || !be)) { alert('Укажи время перерыва или убери его'); return; }
-  var res = computeShift(s, e, bs, be);
+  var res = computeShift(s, e, bs, be, currentShiftBase);
   if (!res) { alert('Проверь время смены'); return; }
 
   var data = loadEntries();
-  data[currentShiftDate] = { total: res.total, start: s, end: e, bStart: bs || null, bEnd: be || null };
+  data[currentShiftDate] = { total: res.total, base: currentShiftBase, start: s, end: e, bStart: bs || null, bEnd: be || null };
   saveEntries(data);
   closeShiftModal();
   renderCalendar();
@@ -760,6 +765,9 @@ function quickDelete(iso, ev) {
 }
 
 // ═══ INIT ═══
+document.getElementById('tRateBase').textContent = CURRENT_BASE.toFixed(2) + ' €/ч';
+document.getElementById('tRateMid').textContent = (CURRENT_BASE * 1.2).toFixed(2) + ' €/ч';
+document.getElementById('tRateLate').textContent = (CURRENT_BASE * 1.5).toFixed(2) + ' €/ч';
 renderCalendar();
 </script>
 </body>
